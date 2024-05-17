@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumidor de Textos</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Resumidor de Textos</h1>
+        <form id="resumenForm">
+            <div class="form-group">
+                <label for="texto">Introduce el texto a resumir:</label>
+                <textarea class="form-control" id="texto" rows="10" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="idioma">Selecciona el idioma del resumen:</label>
+                <select class="form-control" id="idioma">
+                    <option>Español</option>
+                    <option>Inglés</option>
+                    <option>Francés</option>
+                    <option>Alemán</option>
+                    <option>Italiano</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Resumir</button>
+        </form>
+        <div class="mt-5">
+            <h3>Resumen:</h3>
+            <pre id="resultado" class="bg-light p-3"></pre>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#resumenForm').on('submit', function(event){
+                event.preventDefault();
+                var texto = $('#texto').val();
+                var idioma = $('#idioma').val();
+
+                $.ajax({
+                    url: '/resumir',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        texto: texto,
+                        idioma: idioma
+                    }),
+                    success: function(response){
+                        $('#resultado').text(response.resumen);
+                    },
+                    error: function(xhr){
+                        var error = JSON.parse(xhr.responseText);
+                        $('#resultado').text('Error: ' + error.error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
